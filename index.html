@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>iPod Nano 3rd Gen</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c0c0c0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+        /* iPod Nano 3rd Gen Gövde Tasarımı (320x420 Oranında Tombul Form) */
+        .ipod-nano {
+            width: 320px;
+            height: 460px;
+            background: linear-gradient(135deg, #e6e6e6 0%, #d4d4d4 50%, #b8b8b8 100%);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            position: relative;
+            border: 1px solid #999;
+        }
+        /* Ekran Çerçevesi */
+        .screen-bezel {
+            width: 100%;
+            height: 220px;
+            background-color: #000;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* iPod Ekranı (2 inç QVGA 320x240 Ekran Simülasyonu) */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            font-size: 13px;
+        }
+        /* Üst Durum Çubuğu */
+        .status-bar {
+            height: 22px;
+            background: linear-gradient(to bottom, #ededed 0%, #cecece 100%);
+            border-bottom: 1px solid #b0b0b0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 11px;
+        }
+        /* Çift Bölmeli Bölünmüş Ekran (Nano 3rd Gen Özelliği) */
+        .split-view {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            height: calc(100% - 22px);
+        }
+        .menu-list {
+            width: 50%;
+            background: #fff;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+        }
+        .menu-item {
+            padding: 6px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #000;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .menu-item.active {
+            background: linear-gradient(to bottom, #388bfd 0%, #0366d6 100%);
+            color: #fff;
+        }
+        .menu-item::after {
+            content: "›";
+            font-size: 14px;
+        }
+        .menu-item.active::after {
+            color: #fff;
+        }
+        .preview-pane {
+            width: 50%;
+            background: #eef2f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+        }
+        .album-art {
+            width: 90px;
+            height: 90px;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: #333;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 8px;
+        }
+        /* Cover Flow Görünümü */
+        .cover-flow-view {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 500px;
+            overflow: hidden;
+            position: relative;
+        }
+        .cover-item {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            background-size: cover;
+            border-radius: 4px;
+        }
+        /* Oyun / Brick Ekranı */
+        .game-view {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Click Wheel (İkonik Tık Çarkı) */
+        .click-wheel-container {
+            margin-top: 18px;
+            width: 180px;
+            height: 180px;
+            background: #f8f8f8;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2), inset 0 -2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            touch-action: none;
+        }
+        .wheel-btn {
+            position: absolute;
+            font-weight: bold;
+            color: #888;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        .btn-menu { top: 12px; }
+        .btn-prev { left: 12px; }
+        .btn-next { right: 12px; }
+        .btn-play { bottom: 12px; }
+
+        /* Ortadaki Seçim Butonu */
+        .center-button {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.8);
+            border: 1px solid #ccc;
+            z-index: 10;
+        }
+        .center-button:active {
+            background: #d5d5d5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ipod-nano">
+    <div class="screen-bezel">
+        <div class="screen" id="screen">
+            <div class="status-bar">
+                <span id="time">10:09</span>
+                <span id="title-bar">iPod</span>
+                <span>🔋</span>
+            </div>
+            
+            <div id="content-area" style="height: 100%;">
+                <!-- Dinamik İçerik Buraya Gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Click Wheel -->
+    <div class="click-wheel-container" id="wheel">
+        <span class="wheel-btn btn-menu" id="btn-menu">MENU</span>
+        <span class="wheel-btn btn-prev">⏮</span>
+        <span class="wheel-btn btn-next">⏭</span>
+        <span class="wheel-btn btn-play">⏯</span>
+        <div class="center-button" id="btn-center"></div>
+    </div>
+</div>
+
+<script>
+    // Audio Context (Ses Efekti Üretici)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playClickSound() {
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.03);
+        } catch(e){}
+        if(navigator.vibrate) navigator.vibrate(5);
+    }
+
+    // Ekran & Menü Mantığı
+    const menus = {
+        main: ["Müzik", "Cover Flow", "Fotoğraflar", "Oyunlar (Brick)", "Ayarlar"],
+        music: ["Tüm Şarkılar", "Sanatçılar", "Albümler"],
+        games: ["Brick Break"]
+    };
+
+    let currentMenu = "main";
+    let selectedIndex = 0;
+    let viewHistory = ["main"];
+
+    const contentArea = document.getElementById("content-area");
+
+    function renderView() {
+        if (currentMenu === "main" || currentMenu === "music" || currentMenu === "games") {
+            const list = menus[currentMenu];
+            let html = `<div class="split-view"><div class="menu-list">`;
+            list.forEach((item, index) => {
+                html += `<div class="menu-item ${index === selectedIndex ? 'active' : ''}">${item}</div>`;
+            });
+            html += `</div><div class="preview-pane">
+                        <div class="album-art" style="background-image: url('https://picsum.photos/200?random=${selectedIndex}')"></div>
+                        <div style="font-weight:bold; font-size:11px;">${list[selectedIndex]}</div>
+                     </div></div>`;
+            contentArea.innerHTML = html;
+        } else if (currentMenu === "Cover Flow") {
+            contentArea.innerHTML = `
+                <div class="cover-flow-view">
+                    <div class="cover-item" style="transform: rotateY(45deg) translateZ(-100px) translateX(-80px); background-image: url('https://picsum.photos/200?random=1')"></div>
+                    <div class="cover-item" style="transform: translateZ(50px); background-image: url('https://picsum.photos/200?random=2'); border: 2px solid #fff;"></div>
+                    <div class="cover-item" style="transform: rotateY(-45deg) translateZ(-100px) translateX(80px); background-image: url('https://picsum.photos/200?random=3')"></div>
+                </div>`;
+        } else if (currentMenu === "Brick Break") {
+            contentArea.innerHTML = `<div class="game-view"><canvas id="brickCanvas" width="300" height="190"></canvas></div>`;
+            initBrickGame();
+        } else {
+            contentArea.innerHTML = `<div style="padding:20px; text-align:center;"><h3>${currentMenu}</h3><p style="margin-top:10px; color:#666;">İçerik Yükleniyor...</p></div>`;
+        }
+    }
+
+    // Click Wheel Kaydırma Mantığı
+    const wheel = document.getElementById("wheel");
+    let lastAngle = 0;
+
+    function getAngle(x, y) {
+        const rect = wheel.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
+    }
+
+    wheel.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        const angle = getAngle(touch.clientX, touch.clientY);
+        if (Math.abs(angle - lastAngle) > 20) {
+            playClickSound();
+            if (angle > lastAngle) {
+                navigate(1);
+            } else {
+                navigate(-1);
+            }
+            lastAngle = angle;
+        }
+    });
+
+    function navigate(direction) {
+        const list = menus[currentMenu];
+        if (list) {
+            selectedIndex = (selectedIndex + direction + list.length) % list.length;
+            renderView();
+        }
+    }
+
+    // Buton Tıklamaları
+    document.getElementById("btn-center").addEventListener("click", () => {
+        playClickSound();
+        const list = menus[currentMenu];
+        if (list) {
+            const selected = list[selectedIndex];
+            if (menus[selected]) {
+                viewHistory.push(selected);
+                currentMenu = selected;
+                selectedIndex = 0;
+            } else if (selected === "Cover Flow" || selected === "Brick Break") {
+                viewHistory.push(selected);
+                currentMenu = selected;
+            }
+            renderView();
+        }
+    });
+
+    document.getElementById("btn-menu").addEventListener("click", () => {
+        playClickSound();
+        if (viewHistory.length > 1) {
+            viewHistory.pop();
+            currentMenu = viewHistory[viewHistory.length - 1];
+            selectedIndex = 0;
+            renderView();
+        }
+    });
+
+    // Brick Oyunu Simülasyonu
+    function initBrickGame() {
+        const canvas = document.getElementById("brickCanvas");
+        if(!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let x = canvas.width/2, y = canvas.height-30, dx = 2, dy = -2;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI*2); ctx.fillStyle = "#0095DD"; ctx.fill(); ctx.closePath();
+            x += dx; y += dy;
+            if(x + dx > canvas.width-6 || x + dx < 6) dx = -dx;
+            if(y + dy < 6 || y + dy > canvas.height-6) dy = -dy;
+            if(currentMenu === "Brick Break") requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
+    // Saat Güncelleme
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById("time").innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }, 1000);
+
+    // PWA Service Worker Kaydı
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
+    renderView();
+</script>
+</body>
+</html>
