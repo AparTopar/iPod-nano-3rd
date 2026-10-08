@@ -1,0 +1,15 @@
+{
+  "name": "iPod Nano 3rd",
+  "short_name": "iPod Nano",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#c0c0c0",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/0/191.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
